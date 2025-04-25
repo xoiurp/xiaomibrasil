@@ -3,13 +3,11 @@ import { getProductsByCollection, getCollections, Collection, Product } from '..
 import ProductCard from '../../../components/product/ProductCard';
 import Link from 'next/link';
 
-// Definindo os parâmetros da página
-// Definindo os parâmetros da página
-interface CategoryPageParams {
-  category: string;
-}
-
-export default async function CategoryPage({ params }: { params: CategoryPageParams }) {
+export default async function CategoryPage({
+  params,
+}: {
+  params: { category: string };
+}) {
   const { category } = params;
   
   // Buscando produtos da categoria e todas as categorias
