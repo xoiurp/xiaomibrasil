@@ -3,11 +3,7 @@ import { getProductsByCollection, getCollections, Collection, Product } from '..
 import ProductCard from '../../../components/product/ProductCard';
 import Link from 'next/link';
 
-export default async function CategoryPage({
-  params,
-}: {
-  params: { category: string };
-}) {
+export default async function CategoryPage({ params }: any) {
   const { category } = params;
   
   // Buscando produtos da categoria e todas as categorias
