@@ -39,9 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-<<<<<<< HEAD
-=======
 
 .history/
 temp-repo/
->>>>>>> 5f18ab569611432419326ddb4bb09ac0d9d5a00c

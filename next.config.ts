@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-<<<<<<< HEAD
   images: {
     domains: [
       'i01.appmifile.com',
@@ -17,12 +16,6 @@ const nextConfig: NextConfig = {
   env: {
     SHOPIFY_STORE_DOMAIN: process.env.SHOPIFY_STORE_DOMAIN,
     SHOPIFY_STOREFRONT_TOKEN_CLIENT: process.env.SHOPIFY_STOREFRONT_TOKEN_CLIENT,
-=======
-  /* config options here */
-  typescript: {
-    // Desativa a verificação de tipos durante o build
-    ignoreBuildErrors: true,
->>>>>>> 5f18ab569611432419326ddb4bb09ac0d9d5a00c
   },
 };
 
