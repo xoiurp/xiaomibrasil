@@ -52,9 +52,12 @@ export default function AdminPage() {
     updateProductForm('images', updatedImages);
   };
 
+  // Tipo seguro para variante
+  type VariantType = NonNullable<ProductCreateInput['variants']>[number];
+
   // Função para atualizar a primeira variante do produto
-  const updateProductVariant = (field: keyof ProductCreateInput['variants'][0], value: string | number) => {
-    const updatedVariants = [...productForm.variants || []];
+  const updateProductVariant = (field: keyof VariantType, value: string | number) => {
+    const updatedVariants = [...(productForm.variants || [])];
     if (updatedVariants.length === 0) {
       updatedVariants.push({ price: '0.00' });
     }
@@ -84,10 +87,10 @@ export default function AdminPage() {
         images: [{ src: '', altText: '' }],
         variants: [{ price: '0.00' }]
       });
-    } catch (error: Error) {
+    } catch (error) {
       setProductMessage({
         type: 'error',
-        text: `Erro ao criar produto: ${error.message}` 
+        text: `Erro ao criar produto: ${error instanceof Error ? error.message : String(error)}` 
       });
     } finally {
       setIsProductLoading(false);
@@ -116,10 +119,10 @@ export default function AdminPage() {
         description: '',
         image: ''
       });
-    } catch (error: Error) {
+    } catch (error) {
       setCollectionMessage({
         type: 'error',
-        text: `Erro ao criar coleção: ${error.message}` 
+        text: `Erro ao criar coleção: ${error instanceof Error ? error.message : String(error)}` 
       });
     } finally {
       setIsCollectionLoading(false);

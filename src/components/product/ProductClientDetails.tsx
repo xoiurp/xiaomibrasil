@@ -9,9 +9,11 @@ import Accordion from '@/components/ui/Accordion'; // Importar o componente Acco
 import { Product } from '@/lib/shopify'; // Importar a interface Product
 
 // Definir a interface para as props que o componente receberá
+type VariantNode = NonNullable<Product['variants']>['edges'][number]['node'];
+
 interface ProductClientDetailsProps {
   product: Product;
-  variants: Product['variants'][0]['edges'][0]['node'][]; // Tipo mais específico para variantes
+  variants: VariantNode[]; // Tipo mais seguro para variantes
   images: { src: string; alt: string }[];
   uniqueColors: { name: string; hex: string }[];
   price: string;
@@ -69,7 +71,7 @@ export default function ProductClientDetails({
   const selectedVariantId = variants.find(variant => {
     const colorOption = variant.selectedOptions.find((option: { name: string; value: string }) => option.name.toLowerCase() === 'color' || option.name.toLowerCase() === 'cor');
     return colorOption && colorOption.value === selectedColor;
-  })?.id || variants[0]?.id || product.variants.edges[0]?.node.id; // Fallback mais seguro para variantId
+  })?.id || variants[0]?.id || product.variants?.edges?.[0]?.node.id || ""; // Fallback mais seguro para variantId
 
   const [quantity, setQuantity] = useState(1);
 
@@ -80,9 +82,21 @@ export default function ProductClientDetails({
   });
 
   // Determina quais imagens exibir na galeria
-  const galleryImages = selectedVariant?.variantImages?.length > 0
-    ? selectedVariant.variantImages // Usa imagens da variante se existirem
-    : images; // Caso contrário, usa as imagens padrão do produto
+  type VariantWithImages = VariantNode & { variantImages?: { src: string; alt?: string }[]; currencyCode?: string; };
+
+  const isVariantWithImages = (variant: VariantNode): variant is VariantWithImages =>
+    typeof variant === "object" && variant !== null && "variantImages" in variant && Array.isArray((variant as VariantWithImages).variantImages);
+
+  const galleryImages =
+    selectedVariant && isVariantWithImages(selectedVariant) && selectedVariant.variantImages && selectedVariant.variantImages.length > 0
+      ? selectedVariant.variantImages.map(img => ({
+          src: img.src,
+          alt: img.alt || "",
+        }))
+      : images.map(img => ({
+          src: img.src,
+          alt: img.alt || "",
+        }));
 
   // Função para aumentar a quantidade
   const handleIncreaseQuantity = useCallback(() => {
@@ -225,10 +239,19 @@ export default function ProductClientDetails({
                     id: product.id,
                     // Combina título do produto e nome da variante (cor)
                     title: `${product.title} - ${selectedVariant?.title || selectedColor || ''}`,
-                    price: parseFloat(selectedVariant?.price || product.priceRange.minVariantPrice.amount), // Usa preço da variante selecionada
-                    currencyCode: selectedVariant?.currencyCode || product.priceRange.minVariantPrice.currencyCode,
-                    // Usa a primeira imagem da variante, se existir, senão a imagem principal
-                    image: selectedVariant?.variantImages?.[0]?.src || mainImage.src,
+                    price: parseFloat(
+                      typeof selectedVariant?.price === "string"
+                        ? selectedVariant.price
+                        : product.priceRange.minVariantPrice.amount
+                    ),
+                    currencyCode:
+                      (selectedVariant && isVariantWithImages(selectedVariant) && typeof selectedVariant.currencyCode === "string"
+                        ? selectedVariant.currencyCode
+                        : product.priceRange.minVariantPrice.currencyCode) || "BRL",
+                    image:
+                      (selectedVariant && isVariantWithImages(selectedVariant) && selectedVariant.variantImages && selectedVariant.variantImages[0]?.src)
+                        ? selectedVariant.variantImages[0].src
+                        : mainImage.src || "",
                     variantId: selectedVariantId,
                     productId: product.id,
                   }}
@@ -287,12 +310,12 @@ export default function ProductClientDetails({
       {/* Container separado para o IsolatedHtmlContent com largura total real */}
       <div className="fullwidth-html-content">
         <IsolatedHtmlContent
-          htmlContent={product.descriptionHtml}
-          mobileHtmlContent={getMobileHtmlContent(product)}
-          desktopCss={desktopCss} // Passa a prop
-          mobileCss={mobileCss}   // Passa a prop
-          mobileFooterHeight={600} // Altura do footer mobile em pixels (conforme informado)
-          desktopFooterHeight={500} // Altura do footer desktop em pixels (conforme informado)
+          htmlContent={product.descriptionHtml || ""}
+          mobileHtmlContent={getMobileHtmlContent(product) || ""}
+          desktopCss={desktopCss}
+          mobileCss={mobileCss}
+          mobileFooterHeight={600}
+          desktopFooterHeight={500}
         />
       </div>
     </>

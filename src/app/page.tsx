@@ -61,7 +61,12 @@ return (
       <ExclusiveOffersSlider products={products} />
 
     {/* Categorias em destaque */}
-    <CategorySlider categories={collections.slice(0, 6)} />
+    <CategorySlider categories={collections.slice(0, 6).map((c) => ({
+      id: c.id,
+      title: c.title,
+      handle: c.handle,
+      image: c.image ? { originalSrc: c.image.originalSrc } : undefined
+    }))} />
     
     <div className="container mx-auto px-4 py-8">
 

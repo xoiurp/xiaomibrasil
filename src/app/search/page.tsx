@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import ProductCard from '../../components/product/ProductCard';
@@ -8,10 +8,10 @@ import ProductCard from '../../components/product/ProductCard';
 // Importando a função de busca de produtos
 import { searchProducts, Product } from '../../lib/shopify';
 
-export default function SearchPage() {
+function SearchPageContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
-  
+
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState(query);
@@ -43,12 +43,12 @@ export default function SearchPage() {
   // Função para lidar com a submissão do formulário
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Atualizar a URL com o novo termo de busca
     const url = new URL(window.location.href);
     url.searchParams.set('q', searchTerm);
     window.history.pushState({}, '', url.toString());
-    
+
     // Recarregar a página para acionar a nova busca
     window.location.href = url.toString();
   };
@@ -152,5 +152,13 @@ export default function SearchPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-12"><div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#FF6700]"></div><p className="mt-4 text-gray-600">Carregando busca...</p></div>}>
+      <SearchPageContent />
+    </Suspense>
   );
 }

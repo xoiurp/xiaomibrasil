@@ -76,6 +76,13 @@ const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const SHOPIFY_STOREFRONT_TOKEN_CLIENT = process.env.SHOPIFY_STOREFRONT_TOKEN_CLIENT;
 const SHOPIFY_ADMIN_API_TOKEN = process.env.SHOPIFY_ADMIN_API_TOKEN;
 
+if (!SHOPIFY_STOREFRONT_TOKEN_CLIENT) {
+  throw new Error("A variável de ambiente SHOPIFY_STOREFRONT_TOKEN_CLIENT não está definida.");
+}
+if (!SHOPIFY_ADMIN_API_TOKEN) {
+  throw new Error("A variável de ambiente SHOPIFY_ADMIN_API_TOKEN não está definida.");
+}
+
 // Log para debug dos valores usados
 console.log('Valores usados para a integração:');
 console.log('SHOPIFY_STORE_DOMAIN:', SHOPIFY_STORE_DOMAIN);
