@@ -4,13 +4,12 @@ import ProductCard from '../../../components/product/ProductCard';
 import Link from 'next/link';
 
 // Definindo os parâmetros da página
-interface CategoryPageProps {
-  params: {
-    category: string;
-  };
+// Definindo os parâmetros da página
+interface CategoryPageParams {
+  category: string;
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({ params }: { params: CategoryPageParams }) {
   const { category } = params;
   
   // Buscando produtos da categoria e todas as categorias
